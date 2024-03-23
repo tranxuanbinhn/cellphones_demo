@@ -6,15 +6,25 @@ public class SignupRequest {
     private String username;
     private String email;
     private String password;
+    private String phonenumber;
     private Set<String> role;
 
-    public SignupRequest(String userName, String email, String password, Set<String> role) {
+    public SignupRequest(String userName, String email, String password,String phonenumber, Set<String> role) {
         this.username = userName;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.phonenumber = phonenumber;
     }
 
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
 
     public String getUsername() {
         return username;

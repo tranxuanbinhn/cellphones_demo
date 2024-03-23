@@ -12,6 +12,7 @@ import com.cellphones10.repository.UserRepository;
 import com.cellphones10.security.jwt.JwtUtils;
 import com.cellphones10.security.service.UserDetailsImpl;
 
+import com.cellphones10.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,13 +48,30 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
+
 
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        String username = "";
+        if(loginRequest.getUsername() != null)
+        {
+            username = loginRequest.getUsername() ;
+        }
+        else  if(loginRequest.getEmail() != null)
+        {
+            username = userDetailsService.loadUsernameByEmail(loginRequest.getEmail());
+        }
+        else  if(loginRequest.getPhonenumber() != null)
+        {
+            username = userDetailsService.loadUsernameByPhonenumber(loginRequest.getPhonenumber());
+        }
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword())
+        );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -67,6 +85,7 @@ public class AuthController {
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
+                userDetails.getPhonenumber(),
                 roles));
     }
 
@@ -83,11 +102,19 @@ public class AuthController {
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
+        if (userRepository.existsByPhonenumber(signUpRequest.getPhonenumber())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Phone number is already in use!"));
+        }
 
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getPhonenumber()
+        )
+        ;
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();

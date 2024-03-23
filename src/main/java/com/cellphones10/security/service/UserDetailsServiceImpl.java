@@ -23,4 +23,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return UserDetailsImpl.build(user);
     }
+    public String loadUsernameByEmail(String email) throws  UsernameNotFoundException{
+        User user = userRepository.findByEmail(email);
+        return user.getUsername();
+
+
+}
+    public String loadUsernameByPhonenumber(String phonenumber) throws  UsernameNotFoundException{
+        User user = userRepository.findByPhonenumber(phonenumber);
+        return user.getUsername();
+    }
+
 }

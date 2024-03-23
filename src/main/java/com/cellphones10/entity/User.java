@@ -26,21 +26,34 @@ public class User extends BaseEntity{
     @Size(max =120)
     private String password;
 
+    @NotBlank
+    @Size(max = 11)
+    private String phonenumber;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String phonenumber) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.phonenumber = phonenumber;
 
     }
     public User() {
 
 
+    }
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
     }
 
     public String getUsername() {
