@@ -13,4 +13,29 @@ public class BrandEntity extends  BaseEntity{
 
     @OneToMany(mappedBy = "brand")
     private List<ProductEntity> productEntitys;
+
+    public BrandEntity(String brandName, List<ProductEntity> productEntitys) {
+        this.brandName = brandName;
+        this.productEntitys = productEntitys;
+    }
+
+    public BrandEntity() {
+
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public List<ProductEntity> getProductEntitys() {
+        return productEntitys;
+    }
+
+    public void setProductEntitys(List<ProductEntity> productEntitys) {
+        this.productEntitys = productEntitys;
+    }
 }

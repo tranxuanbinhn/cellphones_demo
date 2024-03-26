@@ -19,11 +19,11 @@ public abstract class BaseEntity  {
 
     @Column(updatable = false)
     @CreatedBy()
-    private String createBy;
+    private String createdBy;
 
     @Column(updatable = false)
     @CreatedDate()
-    private Date createDate;
+    private Date createdDate;
 
     @Column(insertable = false)
     @LastModifiedBy
@@ -42,19 +42,19 @@ public abstract class BaseEntity  {
     }
 
     public String getCreateBy() {
-        return createBy;
+        return createdBy;
     }
 
     public void setCreateBy(String createBy) {
-        this.createBy = createBy;
+        this.createdBy = createBy;
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createdDate;
     }
 
     public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+        this.createdDate = createDate;
     }
 
     public String getMoidfiedBy() {

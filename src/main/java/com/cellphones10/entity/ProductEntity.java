@@ -22,7 +22,7 @@ public class ProductEntity extends BaseEntity{
     private String color;
 
     @Column(name = "numberstock")
-    private String numberStock;
+    private Number numberStock;
 
     @Column(name = "price")
     private BigDecimal price;
@@ -52,5 +52,10 @@ public class ProductEntity extends BaseEntity{
 
     @ManyToMany(mappedBy = "products")
     private List<ReviewEntity> reviews;
+
+    @ManyToMany
+    @JoinTable(name = "orderdetail_product" , joinColumns = @JoinColumn(name ="orderdetail_id"),
+    inverseJoinColumns = @JoinColumn(name ="product_id"))
+    private List<OrderDetailEntity> orderdetails;
 
 }

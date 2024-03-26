@@ -72,7 +72,7 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
-                .authorizeHttpRequests().antMatchers("/api/test/all").permitAll()
+                .authorizeHttpRequests().antMatchers("/api/test/**").permitAll()
                 .antMatchers(("/api/auth/*")).permitAll()
                 .antMatchers("/api/test/user").hasRole("USER")
                 .antMatchers("/api/test/mod").hasRole("MODERATOR")

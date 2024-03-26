@@ -7,6 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,6 +30,9 @@ public class User extends BaseEntity{
     @NotBlank
     @Size(max = 11)
     private String phonenumber;
+
+    @OneToMany(mappedBy = "user")
+    private List<OrderEntity> orders;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
