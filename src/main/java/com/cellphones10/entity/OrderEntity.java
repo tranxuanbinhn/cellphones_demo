@@ -1,10 +1,15 @@
 package com.cellphones10.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "orders")
 public class OrderEntity extends BaseEntity{
 
@@ -19,4 +24,8 @@ public class OrderEntity extends BaseEntity{
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
+
+    public OrderEntity() {
+
+    }
 }

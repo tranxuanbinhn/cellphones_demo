@@ -1,6 +1,9 @@
 package com.cellphones10.entity;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,6 +11,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "product")
+@Getter
+@Setter
 public class ProductEntity extends BaseEntity{
     @Column(name = "name")
     private String productName;
@@ -42,20 +47,20 @@ public class ProductEntity extends BaseEntity{
     @Column(name = "width")
     private Integer width;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private BrandEntity brand;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private CategoryEntity category;
 
     @ManyToMany(mappedBy = "products")
     private List<ReviewEntity> reviews;
 
-    @ManyToMany
-    @JoinTable(name = "orderdetail_product" , joinColumns = @JoinColumn(name ="orderdetail_id"),
-    inverseJoinColumns = @JoinColumn(name ="product_id"))
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private List<OrderDetailEntity> orderdetails;
 
+    public ProductEntity() {
+
+    }
 }

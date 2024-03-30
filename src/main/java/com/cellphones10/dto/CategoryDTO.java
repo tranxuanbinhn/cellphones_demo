@@ -10,14 +10,14 @@ import java.util.List;
 public class CategoryDTO extends AbstractDTO{
     private String categoryName;
     private String categoryCode;
-    private List<ProductDTO> products;
+    private List<Long> productIds;
 
-    public CategoryDTO(String categoryName, String categoryCode, List<ProductDTO> products) {
+    public CategoryDTO(String categoryName, String categoryCode, List<Long> productIds) {
         this.categoryName = categoryName;
         this.categoryCode = categoryCode;
-        this.products = products;
+        this.productIds = productIds;
     }
-    public CategoryDTO() {
 
+    public CategoryDTO() {
     }
 }

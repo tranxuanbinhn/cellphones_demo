@@ -3,20 +3,20 @@ package com.cellphones10.dto;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-public class BrandDTO extends  AbstractDTO{
+public class BrandDTO extends  AbstractDTO {
     @NotBlank
     private String brandName;
 
-    private List<ProductDTO> productDTOS;
+    private List<Long> productIds;
 
-    public BrandDTO(String brandName, List<ProductDTO> productDTOS) {
+    public BrandDTO(@NotBlank String brandName, List<Long> productIds) {
         this.brandName = brandName;
-        this.productDTOS = productDTOS;
+        this.productIds = productIds;
     }
-
     public BrandDTO() {
 
     }
+
     public String getBrandName() {
         return brandName;
     }
@@ -25,11 +25,11 @@ public class BrandDTO extends  AbstractDTO{
         this.brandName = brandName;
     }
 
-    public List<ProductDTO> getProductDTOS() {
-        return productDTOS;
+    public List<Long> getProductIds() {
+        return productIds;
     }
 
-    public void setProductDTOS(List<ProductDTO> productDTOS) {
-        this.productDTOS = productDTOS;
+    public void setProductIds(List<Long> productIds) {
+        this.productIds = productIds;
     }
 }
