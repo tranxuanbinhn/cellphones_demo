@@ -47,11 +47,12 @@ public class ProductEntity extends BaseEntity{
     @Column(name = "width")
     private Integer width;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "brand_id")
     private BrandEntity brand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
     @ManyToMany(mappedBy = "products")

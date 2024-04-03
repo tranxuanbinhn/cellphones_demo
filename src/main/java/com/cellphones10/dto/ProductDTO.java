@@ -15,6 +15,7 @@ public class ProductDTO extends AbstractDTO{
     private  String size;
     private String color;
     private Integer numberStock;
+    @NotBlank
     private BigDecimal price;
     private  String image;
     private  Integer weight;
@@ -28,7 +29,7 @@ public class ProductDTO extends AbstractDTO{
     private List<Long> orderdetailIds;
 
 
-    public ProductDTO(@NotBlank String productName, String description, String size, String color, Integer numberStock, BigDecimal price, String image, Integer weight, Integer height, Integer length, Integer width, String brandName, String categoryName, List<Long> reviewIds, List<Long> orderdetailIds) {
+    public ProductDTO(@NotBlank String productName, String description, String size, String color, Integer numberStock,@NotBlank BigDecimal price, String image, Integer weight, Integer height, Integer length, Integer width, String brandName, String categoryName, List<Long> reviewIds, List<Long> orderdetailIds) {
         this.productName = productName;
         this.description = description;
         this.size = size;

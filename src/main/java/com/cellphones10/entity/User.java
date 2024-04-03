@@ -34,6 +34,10 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user")
     private List<OrderEntity> orders;
 
+    @OneToOne
+    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    private CartEntity cart;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
@@ -90,5 +94,21 @@ public class User extends BaseEntity{
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public List<OrderEntity> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderEntity> orders) {
+        this.orders = orders;
+    }
+
+    public CartEntity getCart() {
+        return cart;
+    }
+
+    public void setCart(CartEntity cart) {
+        this.cart = cart;
     }
 }

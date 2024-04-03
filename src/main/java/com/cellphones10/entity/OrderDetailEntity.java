@@ -24,6 +24,10 @@ public class OrderDetailEntity extends  BaseEntity{
         @JoinColumn(name = "order_id")
         private OrderEntity order;
 
+        @ManyToOne()
+        @JoinColumn(name = "cart_id")
+        private CartEntity cart;
+
         public OrderDetailEntity() {
 
         }

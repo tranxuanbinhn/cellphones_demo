@@ -48,14 +48,14 @@ public class ProductService implements IProductService {
             throw  new RuntimeException("Brand is null");
         }
         ProductEntity productEntity = new ProductEntity();
-
+        productEntity = mapper.map(productDTO, ProductEntity.class);
         productEntity.setBrand(brandEntity);
         productEntity.setCategory(categoryEntity);
         productEntity.setProductName(productDTO.getProductName());
-//        productEntity = mapper.map(productDTO, ProductEntity.class);
 
-        productRepository.save(productEntity);
-        ProductDTO result = mapper.map(productEntity, ProductDTO.class);
+
+        ProductEntity saved =  productRepository.save(productEntity);
+        ProductDTO result = mapper.map(saved, ProductDTO.class);
         result.setCategoryName(categoryEntity.getCategoryName());
         result.setBrandName(brandEntity.getBrandName());
         return result;

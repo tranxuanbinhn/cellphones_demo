@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,11 +43,16 @@ public class OrderdetailService implements IOrderdetailService {
         BigDecimal unitprice = priceProduct.multiply(BigDecimal.valueOf(orderDetailDTO.getQuantity())) ;
         orderDetailDTO.setUnitPrice(unitprice);
         OrderDetailEntity orderDetailEntity = new OrderDetailEntity();
-        orderDetailEntity.setProduct(productEntity.get());
+
         orderDetailEntity = mapper.map(orderDetailDTO, OrderDetailEntity.class);
+        orderDetailEntity.setProduct(productEntity.get());
         OrderDetailEntity saved =  orderdetailRepository.save(orderDetailEntity);
 
-        return mapper.map(saved, OrderDetailDTO.class);
+        OrderDetailDTO result = mapper.map(saved, OrderDetailDTO.class);
+
+
+        result.setProductId(saved.getProduct().getId());
+        return result;
     }
 
     @Override
