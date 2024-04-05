@@ -1,30 +1,26 @@
-package com.cellphones10.controller;
+package com.cellphones10.controller.admin;
 
 import com.cellphones10.dto.CartDTO;
 import com.cellphones10.dto.OrderDetailDTO;
-import com.cellphones10.dto.ProductDTO;
 import com.cellphones10.dto.output.Output;
 import com.cellphones10.dto.output.OutputProductCart;
-import com.cellphones10.security.service.UserDetailsImpl;
 import com.cellphones10.service.impl.CartService;
 import com.cellphones10.service.impl.OrderdetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController()
 @RequestMapping("api/product")
-public class test {
+public class CartController {
     @Autowired
     private OrderdetailService orderdetailService;
     @Autowired

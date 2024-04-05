@@ -141,30 +141,33 @@ public class CartService implements ICartService {
     {
         Integer count = ids.size();
         Optional<User> user = userRepository.findByUsername(username);
-        if(user == null)
+        if(!user.isPresent())
         {
             throw  new RuntimeException("Not found user");
         }
 
         CartEntity cartEntity = user.get().getCart();
         for (Long id:ids) {
-            Optional<OrderDetailEntity> orderDetailEntity = orderdetailRepository.findById(id);
-            if(orderDetailEntity == null)
+            Optional<OrderDetailEntity> orderDetailEntity = orderdetailRepository.findOneById(id);
+            if(!orderDetailEntity.isPresent())
             {
                 throw  new RuntimeException("Not found orderdetail");
             }
-            if(cartEntity.getOrderDetails().contains(orderDetailEntity))
+            if(cartEntity.getOrderDetails().contains(orderDetailEntity.get()))
             {
-                orderdetailRepository.deleteById(id);
+                orderdetailRepository.delete(orderDetailEntity.get());
+                cartEntity.getOrderDetails().remove(orderDetailEntity.get());
                 count --;
             }
         }
         if(count == 0)
         {
+            cartRepository.save(cartEntity);
             return true;
 
         }
-        cartRepository.save(cartEntity);
+
         return false;
     }
+
 }
