@@ -25,6 +25,16 @@ public class OrderEntity extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JoinColumn(name = "method")
+    @Enumerated(EnumType.STRING)
+    private EPayment method;
+
+    @Column(name ="ship_payment")
+    private BigDecimal shipPayment;
+
+    @Column(name = "address")
+    private  String address;
+
     public OrderEntity() {
 
     }

@@ -39,6 +39,7 @@ public class OrderService implements IOrderService {
     public OrderDTO save(OrderDTO orderDTO) {
         try
         {
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String ussername = authentication.getName();
             User user = userRepository.findByUsername(ussername).get();
@@ -59,10 +60,16 @@ public class OrderService implements IOrderService {
                 
             }
             OrderEntity orderEntity = new OrderEntity();
+            if(orderDTO.getMethod().equals("NHANHANG"))
+            {
+                orderEntity.setStatus(true);
+            }
             orderEntity.setStatus(false);
             orderEntity.setOrderDetails(orderDetailEntityList);
             orderEntity.setTotalPrice(total);
             orderEntity.setUser(user);
+            orderEntity.setMethod(orderDTO.getMethod());
+            orderEntity.setAddress(orderDTO.getAddress());
             OrderEntity saved = orderRepository.save(orderEntity);
             return mapper.map(saved, OrderDTO.class);
         }
