@@ -18,8 +18,7 @@ import java.util.Optional;
 public interface OrderdetailRepository extends JpaRepository<OrderDetailEntity,Long> {
 
 
-    List<OrderDetailEntity> findAllByCartId(Long id, Pageable pageable);
-    List<OrderDetailEntity> findAllByCartId(Long id);
+
     Optional<OrderDetailEntity> findById(Long id);
 
 

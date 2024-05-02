@@ -3,13 +3,8 @@ package com.cellphones10.service.impl;
 import com.cellphones10.dto.CartDTO;
 import com.cellphones10.dto.OrderDetailDTO;
 import com.cellphones10.dto.output.OutputProductCart;
-import com.cellphones10.entity.CartEntity;
-import com.cellphones10.entity.OrderDetailEntity;
-import com.cellphones10.entity.User;
-import com.cellphones10.repository.CartRepository;
-import com.cellphones10.repository.OrderdetailRepository;
-import com.cellphones10.repository.ProductRepository;
-import com.cellphones10.repository.UserRepository;
+import com.cellphones10.entity.*;
+import com.cellphones10.repository.*;
 import com.cellphones10.service.ICartService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +16,11 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CartService implements ICartService {
-    @Autowired
-    private OrderdetailRepository orderdetailRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -36,138 +31,117 @@ public class CartService implements ICartService {
     private ProductRepository productRepository;
 
     @Autowired
+    private CartProductRespository cartProductRespository;
+
+    @Autowired
     private CartRepository cartRepository;
     @Override
     @Transactional
     public CartDTO save(CartDTO cartDTO) {
 
-        User user = userRepository.findByUsername(cartDTO.getUserName()).get();
-        if(user == null)
+        Optional<User> user = userRepository.findByUsername(cartDTO.getUserName());
+        if(!user.isPresent())
         {
             throw new RuntimeException("Not found user");
         }
-        Optional<OrderDetailEntity> orderDetailEntity = orderdetailRepository.findById(cartDTO.getOrderDetailIds().get(0));
-        if(orderDetailEntity.isEmpty())
+        CartEntity cartEntity;
+        List<CartProduct> cartProducts = new ArrayList<>();
+        if(user.get().getCart() == null)
         {
-            throw  new RuntimeException();
+             cartEntity = new CartEntity();
+             cartEntity.setUser(user.get());
+
         }
-        CartEntity cartEntity = new CartEntity();
-//        check cart exist
+        else {
+            cartEntity = user.get().getCart();
+            cartProducts = cartEntity.getCartProducts();
 
+        }
+        Optional<ProductEntity> productEntity = productRepository.findById(cartDTO.getProductId());
 
-        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-        orderDetailEntity.get().setCart(cartEntity);
-        if(user.getCart()!=null)
+        Set<Long> idProducts = cartProductRespository.getIdByUsername(user.get().getUsername());
+        CartProduct cartProduct = new CartProduct();
+        if(idProducts.contains(productEntity.get().getId()))
         {
-            Optional<CartEntity> cartEntity1 = cartRepository.findById(user.getCart().getId());
-            List<OrderDetailEntity> oldList = new ArrayList<>();
-            oldList = cartEntity1.get().getOrderDetails();
-            orderDetailEntityList = oldList;
-            cartEntity.setId(user.getCart().getId());
+            cartProduct = cartProductRespository.findByProductId(productEntity.get().getId()).get();
+            int oldQuantity = cartProduct.getQuantity();
+            cartProduct.setQuantity(cartDTO.getQuantityProduct());
         }
 
-        cartEntity.setUser(user);
-        orderDetailEntityList.add(orderDetailEntity.get());
-        cartEntity.setOrderDetails(orderDetailEntityList);
+        cartProduct.setQuantity(cartDTO.getQuantityProduct());
+        cartProduct.setCart(cartEntity);
+        cartProduct.setProduct(productEntity.get());
 
-        user.setCart(cartEntity);
-        CartEntity saved = cartRepository.save(cartEntity);
-        CartDTO result = new CartDTO();
-        result = mapper.map(saved, CartDTO.class);
-        result.setUserName(saved.getUser().getUsername());
-        List<Long> orderDetailIds = new ArrayList<>();
-        for (OrderDetailEntity order:saved.getOrderDetails()) {
-            orderDetailIds.add(order.getId());
-        }
+        cartProducts.add(cartProduct);
+        cartEntity.setCartProducts(cartProducts);
 
 
-        result.setOrderDetailIds(orderDetailIds);
+       CartEntity result = cartRepository.save(cartEntity);
+        CartProduct cartProduct1 = cartProductRespository.save(cartProduct);
+        user.get().setCart(cartEntity);
+        userRepository.save(user.get());
+        CartDTO cartDTO1 = new CartDTO();
 
-     //  userRepository.save(user);
-        return result;
+        cartDTO1.setQuantityProduct(cartProduct1.getQuantity());
+        cartDTO1.setUserName(user.get().getUsername());
+        List<Long> ids = new ArrayList<>();
+        result.getCartProducts().stream().forEach(cartProduct2 -> {
+            ids.add(cartProduct2.getId());
+        });
+        cartDTO1.setProductListId(ids);
+
+        return  cartDTO1;
     }
 
     @Override
     public List<CartDTO> findAll(Pageable pageable) {
         return null;
     }
-    public List<OutputProductCart> findAll(Pageable pageable, String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        if(user == null)
-        {
-            throw new RuntimeException();
-        }
-        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-        CartEntity cart = user.get().getCart();
-       List<OrderDetailEntity> orderDetailEntities = orderdetailRepository.findAllByCartId(cart.getId(), pageable);
-
-        OutputProductCart outputProductCart = new OutputProductCart();
-
-        orderDetailEntities.stream().forEach(orderDetailEntity -> {orderDetailEntityList.add(orderDetailEntity);});
-        List<OutputProductCart> outputProductCarts = new ArrayList<>();
-        orderDetailEntityList.stream().forEach(orderDetailEntity -> {
-         OrderDetailDTO orderDetailDTO = mapper.map(orderDetailEntity, OrderDetailDTO.class);
-
-         outputProductCart.setProductName( orderDetailEntity.getProduct().getProductName());
-         outputProductCart.setPrice(orderDetailEntity.getProduct().getPrice());
-         outputProductCart.setImage(orderDetailEntity.getProduct().getImage());
-         outputProductCart.setId(orderDetailDTO.getId());
-            outputProductCart.setQuantity(orderDetailDTO.getQuantity());
-            outputProductCart.setUnitPrice(orderDetailDTO.getUnitPrice());
-            outputProductCarts.add(outputProductCart);
-        });
-        return outputProductCarts;
-    }
-
+//    public List<OutputProductCart> findAll(Pageable pageable, String username) {
+//        Optional<User> user = userRepository.findByUsername(username);
+//        if(user == null)
+//        {
+//            throw new RuntimeException();
+//        }
+//        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
+//        CartEntity cart = user.get().getCart();
+//       List<OrderDetailEntity> orderDetailEntities = orderdetailRepository.findAllByCartId(cart.getId(), pageable);
+//
+//        OutputProductCart outputProductCart = new OutputProductCart();
+//
+//        orderDetailEntities.stream().forEach(orderDetailEntity -> {orderDetailEntityList.add(orderDetailEntity);});
+//        List<OutputProductCart> outputProductCarts = new ArrayList<>();
+//        orderDetailEntityList.stream().forEach(orderDetailEntity -> {
+//         OrderDetailDTO orderDetailDTO = mapper.map(orderDetailEntity, OrderDetailDTO.class);
+//
+//         outputProductCart.setProductName( orderDetailEntity.getProduct().getProductName());
+//         outputProductCart.setPrice(orderDetailEntity.getProduct().getPrice());
+//         outputProductCart.setImage(orderDetailEntity.getProduct().getImage());
+//         outputProductCart.setId(orderDetailDTO.getId());
+//            outputProductCart.setQuantity(orderDetailDTO.getQuantity());
+//            outputProductCart.setUnitPrice(orderDetailDTO.getUnitPrice());
+//            outputProductCarts.add(outputProductCart);
+//        });
+//        return outputProductCarts;
+//    }
+//
     @Override
     public boolean delete(List<Long> list) {
         return false;
     }
+//
+//    public Long count(String username)
+//    {
+//        Optional<User> user = userRepository.findByUsername(username);
+//        if(user == null)
+//        {
+//            throw new RuntimeException();
+//        }
+//        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
+//        CartEntity cart = user.get().getCart();
+//        List<OrderDetailEntity> orderDetailEntities = orderdetailRepository.findAllByCartId(cart.getId());
+//        return orderDetailEntities.stream().count();
+//    }
 
-    public Long count(String username)
-    {
-        Optional<User> user = userRepository.findByUsername(username);
-        if(user == null)
-        {
-            throw new RuntimeException();
-        }
-        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-        CartEntity cart = user.get().getCart();
-        List<OrderDetailEntity> orderDetailEntities = orderdetailRepository.findAllByCartId(cart.getId());
-        return orderDetailEntities.stream().count();
-    }
-    @Transactional
-    public boolean deleteProductFromCart(List<Long> ids, String username)
-    {
-        Integer count = ids.size();
-        Optional<User> user = userRepository.findByUsername(username);
-        if(!user.isPresent())
-        {
-            throw  new RuntimeException("Not found user");
-        }
-
-        CartEntity cartEntity = user.get().getCart();
-        for (Long id:ids) {
-            Optional<OrderDetailEntity> orderDetailEntity = orderdetailRepository.findOneById(id);
-            if(!orderDetailEntity.isPresent())
-            {
-                throw  new RuntimeException("Not found orderdetail");
-            }
-            if(cartEntity.getOrderDetails().contains(orderDetailEntity.get()))
-            {
-                orderdetailRepository.delete(orderDetailEntity.get());
-                cartEntity.getOrderDetails().remove(orderDetailEntity.get());
-                count --;
-            }
-        }
-        if(count == 0)
-        {
-            cartRepository.save(cartEntity);
-            return true;
-
-        }
-
-        return false;
-    }
 
 }

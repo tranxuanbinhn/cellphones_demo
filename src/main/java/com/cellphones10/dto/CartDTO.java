@@ -7,9 +7,10 @@ import java.util.List;
 @Getter
 @Setter
 public class CartDTO extends AbstractDTO{
-    private List<Long> orderDetailIds;
+    private List<Long> productListId;
+    private Long productId;
     private  String userName;
-
+    private Integer quantityProduct;
     public CartDTO() {
 
     }

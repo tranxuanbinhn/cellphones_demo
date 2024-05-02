@@ -23,6 +23,16 @@ public class ProductDTO extends AbstractDTO{
     private  Integer length;
     private Integer width;
 
+    private Integer screensize;
+
+    private String screentech;
+
+    private  String ramstorage;
+
+    private String internalmemory;
+
+    private  String os;
+
     private  String brandName;
     private String categoryName;
     private List<Long> reviewIds;

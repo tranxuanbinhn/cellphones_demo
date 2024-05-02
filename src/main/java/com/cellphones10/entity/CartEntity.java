@@ -14,13 +14,14 @@ import java.util.List;
 public class CartEntity extends  BaseEntity{
 
 
-        @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL)
-        private List<OrderDetailEntity> orderDetails;
+        @OneToMany(mappedBy = "cart")
+        private List<CartProduct> cartProducts;
+
+
 
         @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
         private User user;
 
-    public CartEntity() {
-
+          public CartEntity() {
     }
 }

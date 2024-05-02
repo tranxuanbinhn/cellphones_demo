@@ -53,6 +53,14 @@ public class CategoryService implements ICategoryService {
         }
         return categoryDTOS;
     }
+    public List<CategoryDTO> findAll() {
+        List<CategoryEntity> categoryEntities=  categoryRespository.findAll();
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
+        for (CategoryEntity categoryEntity:categoryEntities) {
+            categoryDTOS.add(mapper.map(categoryEntity, CategoryDTO.class) );
+        }
+        return categoryDTOS;
+    }
 
     @Override
     public boolean delete(List<Long> list) {

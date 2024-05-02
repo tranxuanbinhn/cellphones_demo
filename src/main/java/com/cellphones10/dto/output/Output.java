@@ -6,11 +6,12 @@ public class Output<T> {
     private Long totalPage;
     private  Integer page;
     private List<T> listResult;
-
-    public Output(Long totalPage, Integer page, List<T> listResult) {
+    private Integer remainingproduct;
+    public Output(Long totalPage, Integer page, List<T> listResult, Integer remainingproduct) {
         this.totalPage = totalPage;
         this.page = page;
         this.listResult = listResult;
+        this.remainingproduct = remainingproduct;
     }
     public Output() {
 
@@ -35,6 +36,14 @@ public class Output<T> {
 
     public List<T> getListResult() {
         return listResult;
+    }
+
+    public Integer getRemainingproduct() {
+        return remainingproduct;
+    }
+
+    public void setRemainingproduct(Integer remainingproduct) {
+        this.remainingproduct = remainingproduct;
     }
 
     public void setListResult(List<T> listResult) {

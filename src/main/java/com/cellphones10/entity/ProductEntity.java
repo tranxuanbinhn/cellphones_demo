@@ -41,6 +41,17 @@ public class ProductEntity extends BaseEntity{
     @Column(name = "height")
     private Integer height;
 
+    private Integer screensize;
+
+    private String screentech;
+
+    private  String ramstorage;
+
+    private String internalmemory;
+
+    private  String os;
+
+
     @Column(name = "length")
     private Integer length;
 
@@ -60,6 +71,11 @@ public class ProductEntity extends BaseEntity{
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private List<OrderDetailEntity> orderdetails;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    private List<CartProduct> cartProducts;
+
+
 
     public ProductEntity() {
 
