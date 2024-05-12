@@ -65,10 +65,13 @@ public class CartService implements ICartService {
         {
             cartProduct = cartProductRespository.findByProductId(productEntity.get().getId()).get();
             int oldQuantity = cartProduct.getQuantity();
+            cartProduct.setQuantity(oldQuantity+ cartDTO.getQuantityProduct());
+        }
+        else {
             cartProduct.setQuantity(cartDTO.getQuantityProduct());
         }
 
-        cartProduct.setQuantity(cartDTO.getQuantityProduct());
+
         cartProduct.setCart(cartEntity);
         cartProduct.setProduct(productEntity.get());
 
@@ -76,20 +79,22 @@ public class CartService implements ICartService {
         cartEntity.setCartProducts(cartProducts);
 
 
-       CartEntity result = cartRepository.save(cartEntity);
+
         CartProduct cartProduct1 = cartProductRespository.save(cartProduct);
         user.get().setCart(cartEntity);
         userRepository.save(user.get());
         CartDTO cartDTO1 = new CartDTO();
 
+        CartEntity result = cartRepository.save(cartEntity);
         cartDTO1.setQuantityProduct(cartProduct1.getQuantity());
         cartDTO1.setUserName(user.get().getUsername());
         List<Long> ids = new ArrayList<>();
-        result.getCartProducts().stream().forEach(cartProduct2 -> {
-            ids.add(cartProduct2.getId());
-        });
+        for (int i = 0; i< result.getCartProducts().size()-1; i++)
+        {
+            ids.add(result.getCartProducts().get(i).getId());
+        }
         cartDTO1.setProductListId(ids);
-
+        cartDTO1.setId(result.getId());
         return  cartDTO1;
     }
 
@@ -97,37 +102,46 @@ public class CartService implements ICartService {
     public List<CartDTO> findAll(Pageable pageable) {
         return null;
     }
-//    public List<OutputProductCart> findAll(Pageable pageable, String username) {
-//        Optional<User> user = userRepository.findByUsername(username);
-//        if(user == null)
-//        {
-//            throw new RuntimeException();
-//        }
-//        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-//        CartEntity cart = user.get().getCart();
-//       List<OrderDetailEntity> orderDetailEntities = orderdetailRepository.findAllByCartId(cart.getId(), pageable);
-//
-//        OutputProductCart outputProductCart = new OutputProductCart();
-//
-//        orderDetailEntities.stream().forEach(orderDetailEntity -> {orderDetailEntityList.add(orderDetailEntity);});
-//        List<OutputProductCart> outputProductCarts = new ArrayList<>();
-//        orderDetailEntityList.stream().forEach(orderDetailEntity -> {
-//         OrderDetailDTO orderDetailDTO = mapper.map(orderDetailEntity, OrderDetailDTO.class);
-//
-//         outputProductCart.setProductName( orderDetailEntity.getProduct().getProductName());
-//         outputProductCart.setPrice(orderDetailEntity.getProduct().getPrice());
-//         outputProductCart.setImage(orderDetailEntity.getProduct().getImage());
-//         outputProductCart.setId(orderDetailDTO.getId());
-//            outputProductCart.setQuantity(orderDetailDTO.getQuantity());
-//            outputProductCart.setUnitPrice(orderDetailDTO.getUnitPrice());
-//            outputProductCarts.add(outputProductCart);
-//        });
-//        return outputProductCarts;
-//    }
-//
+    public List<OutputProductCart> findAll(Pageable pageable, String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user == null)
+        {
+            throw new RuntimeException();
+        }
+        CartEntity cartEntity = user.get().getCart();
+
+        List<CartProduct> cartProductList = cartProductRespository.findAllByCartId(cartEntity.getId(),pageable);
+        List<OutputProductCart> result = new ArrayList<>();
+        cartProductList.stream().forEach(cartProduct -> {
+            OutputProductCart object = new OutputProductCart();
+            object.setPrice(cartProduct.getProduct().getPrice());
+            object.setProductId(cartProduct.getProduct().getId());
+
+            object.setCartProductId(cartProduct.getId());
+            result.add(object);
+        });
+        return result;
+    }
+
     @Override
+    @Transactional
     public boolean delete(List<Long> list) {
-        return false;
+        Integer count = list.size();
+        for (Long id:list) {
+
+            if(cartProductRespository.existsById(id))
+            {
+                cartProductRespository.deleteById(id);
+                count --;
+            }
+
+
+        }
+        if(count == 0)
+        {
+            return  true;
+        }
+        return  false;
     }
 //
 //    public Long count(String username)

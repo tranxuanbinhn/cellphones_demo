@@ -9,13 +9,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class OutputProductCart {
-    private BigDecimal unitPrice;
+    private  Long CartProductId;
     private  Integer quantity;
-    private Long id;
-    private String productName;
-    private String image;
+    private Long productId;
     private BigDecimal price;
-    private Long count;
     public OutputProductCart() {
 
     }

@@ -21,7 +21,7 @@ public class ProductControllerUser {
     @GetMapping()
     public List<ProductDTO> getNewProduct(@RequestParam Long categoryId)
     {
-        return  productService.findTop10ProductByCategoryId(categoryId);
+        return  productService.findTop5ProductByCategoryId(categoryId);
     }
     @GetMapping("/getall")
     public Output<ProductDTO> GetAll(@RequestParam("page") int page, @RequestParam("limit") int limit)
@@ -86,15 +86,35 @@ public class ProductControllerUser {
         return output;
     }
     @GetMapping("/fillterproduct")
-    public Output<ProductDTO> filterProduct(@RequestParam String categorycode, Integer page, Integer limit, String orderby, String dir)
+    public Output<ProductDTO> filterProduct(@RequestParam String categorycode, Integer page, Integer limit, String orderby, Integer dir)
     {
-
         Output<ProductDTO> output = new Output<>();
         List<ProductDTO> list = productService.findProductOrderBy(categorycode, limit,page, orderby,dir);
         output.setListResult(list);
         output.setPage(page);
 //        findProductByCategoryCode
         Long count = productService.countByCategoryCode(categorycode);
+        Integer remainpage =(int) (count-(page*limit));
+        if(remainpage < 0)
+        {
+            remainpage = 0;
+        }
+        output.setRemainingproduct(remainpage);
+        return output;
+    }
+    @GetMapping("/search")
+    public Output<ProductDTO> searchByProductName(@RequestParam String name, Integer page, Integer limit)
+    {
+        Output<ProductDTO> output = new Output<>();
+        if(name.isEmpty())
+        {
+            return  null;
+        }
+        List<ProductDTO> list = productService.searchProductName(name, page,limit);
+        output.setListResult(list);
+        output.setPage(page);
+//        findProductByCategoryCode
+        Long count = productService.countProductSearch(name);
         Integer remainpage =(int) (count-(page*limit));
         if(remainpage < 0)
         {

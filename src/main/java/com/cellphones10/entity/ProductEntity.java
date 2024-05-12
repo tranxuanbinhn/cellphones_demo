@@ -69,7 +69,7 @@ public class ProductEntity extends BaseEntity{
     @ManyToMany(mappedBy = "products")
     private List<ReviewEntity> reviews;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE,mappedBy = "product")
     private List<OrderDetailEntity> orderdetails;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")

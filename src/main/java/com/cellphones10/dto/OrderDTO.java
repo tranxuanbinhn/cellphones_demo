@@ -16,11 +16,12 @@ public class OrderDTO extends AbstractDTO{
     private BigDecimal shipPayment;
     private String address;
     private EPayment method;
+    private  List<Long> cartproductIds;
 
-    public OrderDTO(Boolean status, BigDecimal totalPrice, List<Long> orderDetaiIds, String userName, BigDecimal shipPayment, String address, EPayment method) {
+    public OrderDTO(Boolean status, BigDecimal totalPrice,  String userName, BigDecimal shipPayment, String address, EPayment method) {
         this.status = status;
         this.totalPrice = totalPrice;
-        this.orderDetaiIds = orderDetaiIds;
+
         this.userName = userName;
         this.shipPayment = shipPayment;
         this.address = address;

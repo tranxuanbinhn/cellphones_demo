@@ -18,7 +18,7 @@ public class OrderEntity extends BaseEntity{
     @Column(name ="total_price")
     private BigDecimal totalPrice;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetailEntity> orderDetails;
 
     @ManyToOne()

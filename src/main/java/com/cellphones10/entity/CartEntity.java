@@ -14,7 +14,7 @@ import java.util.List;
 public class CartEntity extends  BaseEntity{
 
 
-        @OneToMany(mappedBy = "cart")
+        @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
         private List<CartProduct> cartProducts;
 
 

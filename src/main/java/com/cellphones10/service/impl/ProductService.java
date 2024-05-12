@@ -12,7 +12,10 @@ import com.cellphones10.service.IProductService;
 import com.sun.jdi.InternalException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -108,10 +111,10 @@ public class ProductService implements IProductService {
       return false;
 
     }
-    public List<ProductDTO> findTop10ProductByCategoryId(Long categoryId)
+    public List<ProductDTO> findTop5ProductByCategoryId(Long categoryId)
     {
         List<ProductDTO> productDTOS = new ArrayList<>();
-        List<ProductEntity> categoryEntities = productRepository.findTop10ProdcutEntityByCategoryId(categoryId);
+        List<ProductEntity> categoryEntities = productRepository.findTop5ProdcutEntityByCategoryId(categoryId);
         categoryEntities.stream().forEach(categoryEntity -> {
             productDTOS.add(mapper.map(categoryEntity, ProductDTO.class));
         });
@@ -120,6 +123,16 @@ public class ProductService implements IProductService {
     public List<ProductDTO> filterProductByPrice(BigDecimal minPrice, BigDecimal maxPrice, Integer page, Integer limit){
             List<ProductEntity> productEntities = productRepository.filterProductByPrice(minPrice, maxPrice, page, limit);
             List<ProductDTO> productDTOS = new ArrayList<>();
+        productEntities.stream().forEach(productEntity -> {
+            productDTOS.add(mapper.map(productEntity, ProductDTO.class));
+
+        });
+        return  productDTOS;
+    }
+    public List<ProductDTO> searchProductName(String productName, Integer page, Integer limit){
+       Pageable pageable = PageRequest.of((page-1), limit);
+       Page<ProductEntity>  productEntities= productRepository.findByProductName(productName, pageable);
+        List<ProductDTO> productDTOS = new ArrayList<>();
         productEntities.stream().forEach(productEntity -> {
             productDTOS.add(mapper.map(productEntity, ProductDTO.class));
 
@@ -145,20 +158,17 @@ public class ProductService implements IProductService {
         return  productDTOS;
     }
 
-    public List<ProductDTO> findProductOrderBy(String categoryCode, Integer limit, Integer page, String order, String dir)
+    public List<ProductDTO> findProductOrderBy(String categoryCode, Integer limit, Integer page, String order, Integer dir)
     {
-        String p = "p."+order;
-        Integer offset = (page-1) * limit;
-        int d = 0;
-        if(dir=="asc")
+        Integer offset = page - 1;
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(order).ascending());;
+        if(dir==1)
         {
-            d = 0;
+             pageable = PageRequest.of(offset, limit, Sort.by(order).descending());
         }
-        else  if(dir == "desc")
-        {
-            d=1;
-        }
-        List<ProductEntity> productEntities = productRepository.filterProduct(categoryCode, limit, offset,  p, d);
+
+
+        List<ProductEntity> productEntities = productRepository.findByCategoryCategoryCode(categoryCode, pageable).getContent();
         List<ProductDTO> productDTOS = new ArrayList<>();
         productEntities.stream().forEach(productEntity -> {productDTOS.add(mapper.map(productEntity,ProductDTO.class));
         });
@@ -173,5 +183,9 @@ public class ProductService implements IProductService {
     public Long count() {
 
         return productRepository.count();
+    }
+    public  Long countProductSearch(String productName)
+    {
+        return productRepository.countFindByProductName(productName);
     }
 }
