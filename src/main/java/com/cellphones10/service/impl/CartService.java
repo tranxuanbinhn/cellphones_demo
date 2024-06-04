@@ -35,16 +35,18 @@ public class CartService implements ICartService {
 
     @Autowired
     private CartRepository cartRepository;
-    @Override
-    @Transactional
-    public CartDTO save(CartDTO cartDTO) {
 
-        Optional<User> user = userRepository.findByUsername(cartDTO.getUserName());
+    @Transactional
+    public CartDTO save(CartDTO cartDTO, String username) {
+
+        //find user
+        Optional<User> user = userRepository.findByUsername(username);
         if(!user.isPresent())
         {
             throw new RuntimeException("Not found user");
         }
         CartEntity cartEntity;
+        //get cartProduct by user
         List<CartProduct> cartProducts = new ArrayList<>();
         if(user.get().getCart() == null)
         {
@@ -65,7 +67,15 @@ public class CartService implements ICartService {
         {
             cartProduct = cartProductRespository.findByProductId(productEntity.get().getId()).get();
             int oldQuantity = cartProduct.getQuantity();
-            cartProduct.setQuantity(oldQuantity+ cartDTO.getQuantityProduct());
+            if(cartDTO.getAdd())
+            {
+                cartProduct.setQuantity(oldQuantity+ cartDTO.getQuantityProduct());
+
+            }
+            else {
+                cartProduct.setQuantity(oldQuantity- cartDTO.getQuantityProduct());
+
+            }
         }
         else {
             cartProduct.setQuantity(cartDTO.getQuantityProduct());
@@ -89,20 +99,24 @@ public class CartService implements ICartService {
         cartDTO1.setQuantityProduct(cartProduct1.getQuantity());
         cartDTO1.setUserName(user.get().getUsername());
         List<Long> ids = new ArrayList<>();
-        for (int i = 0; i< result.getCartProducts().size()-1; i++)
-        {
-            ids.add(result.getCartProducts().get(i).getId());
-        }
+        idProducts.stream().forEach(id->{
+            ids.add(id);
+        });
         cartDTO1.setProductListId(ids);
         cartDTO1.setId(result.getId());
         return  cartDTO1;
     }
 
     @Override
+    public CartDTO save(CartDTO cartDTO) {
+        return null;
+    }
+
+    @Override
     public List<CartDTO> findAll(Pageable pageable) {
         return null;
     }
-    public List<OutputProductCart> findAll(Pageable pageable, String username) {
+    public List<OutputProductCart> findAll( String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if(user == null)
         {
@@ -110,14 +124,17 @@ public class CartService implements ICartService {
         }
         CartEntity cartEntity = user.get().getCart();
 
-        List<CartProduct> cartProductList = cartProductRespository.findAllByCartId(cartEntity.getId(),pageable);
+        List<CartProduct> cartProductList = cartProductRespository.findAllByCartId(cartEntity.getId());
         List<OutputProductCart> result = new ArrayList<>();
         cartProductList.stream().forEach(cartProduct -> {
             OutputProductCart object = new OutputProductCart();
             object.setPrice(cartProduct.getProduct().getPrice());
             object.setProductId(cartProduct.getProduct().getId());
-
+            object.setQuantity(cartProduct.getQuantity());
             object.setCartProductId(cartProduct.getId());
+            object.setProductName(cartProduct.getProduct().getProductName());
+            object.setImage(cartProduct.getProduct().getImage());
+
             result.add(object);
         });
         return result;

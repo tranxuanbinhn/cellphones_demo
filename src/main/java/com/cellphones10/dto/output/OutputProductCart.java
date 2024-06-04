@@ -13,6 +13,9 @@ public class OutputProductCart {
     private  Integer quantity;
     private Long productId;
     private BigDecimal price;
+    private String productName;
+    private String image;
+
     public OutputProductCart() {
 
     }
