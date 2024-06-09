@@ -34,6 +34,9 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user")
     private List<OrderEntity> orders;
 
+    @OneToMany(mappedBy = "user")
+    private List<PaymentEntity> payments;
+
     @OneToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
     private CartEntity cart;

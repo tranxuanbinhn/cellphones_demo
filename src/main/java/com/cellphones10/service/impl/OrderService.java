@@ -45,7 +45,7 @@ public class OrderService implements IOrderService {
 
             OrderEntity orderEntity = new OrderEntity();
 
-            if (orderDTO.getMethod().equals("NHANHANG")) {
+            if (orderDTO.getMethod().equals("PAYBACK")) {
                 orderEntity.setStatus(true);
             }
             else {
@@ -54,7 +54,7 @@ public class OrderService implements IOrderService {
 
 
             orderEntity.setUser(user);
-            orderEntity.setMethod(orderDTO.getMethod());
+
             orderEntity.setAddress(orderDTO.getAddress());
             OrderEntity saved = orderRepository.save(orderEntity);
 

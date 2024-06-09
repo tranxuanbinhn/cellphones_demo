@@ -1,6 +1,5 @@
 package com.cellphones10.dto;
 
-import com.cellphones10.entity.EPayment;
 import lombok.Getter;
 import lombok.Setter;
 
