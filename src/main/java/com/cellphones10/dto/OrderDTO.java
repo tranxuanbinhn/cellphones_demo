@@ -8,17 +8,20 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderDTO extends AbstractDTO{
-    private Boolean status;
+
     private BigDecimal totalPrice;
     private List<Long> orderDetaiIds;
     private  String userName;
     private BigDecimal shipPayment;
+
     private String address;
     private EPayment method;
     private  List<Long> cartproductIds;
 
-    public OrderDTO(Boolean status, BigDecimal totalPrice,  String userName, BigDecimal shipPayment, String address, EPayment method) {
-        this.status = status;
+    private  List<OrderDetailDTO> orderDetailDTOS;
+
+    public OrderDTO( BigDecimal totalPrice,  String userName, BigDecimal shipPayment, String address, EPayment method) {
+
         this.totalPrice = totalPrice;
 
         this.userName = userName;

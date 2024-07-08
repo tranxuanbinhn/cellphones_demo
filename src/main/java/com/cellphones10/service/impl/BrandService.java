@@ -46,6 +46,17 @@ public class BrandService implements IBrandService {
 
         return brandDTOS;
     }
+    public List<BrandDTO> findAll() {
+        List<BrandEntity> brandEntities =  brandRepository.findAll();
+        List<BrandDTO> brandDTOS = new ArrayList<>();
+        for (BrandEntity brandEntitie:brandEntities) {
+            BrandDTO brandDTO = mapper.map(brandEntitie,BrandDTO.class);
+            brandDTOS.add(brandDTO);
+        }
+
+        return brandDTOS;
+    }
+
 
     @Override
     public boolean delete(List<Long> list) {

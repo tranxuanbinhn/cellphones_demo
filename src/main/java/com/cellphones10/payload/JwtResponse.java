@@ -10,15 +10,25 @@ public class JwtResponse {
     private String phonenumber;
     private List<String> roles;
     private String accessToken;
+    private String refreshToken;
     private String typeToken = "Bearer";
 
-    public JwtResponse(String token, Long id, String username, String email,String phonenumber, List<String> roles) {
+    public JwtResponse(String token, Long id, String username, String email,String phonenumber, List<String> roles, String refreshToken) {
         this.accessToken = token;
         this.id = id;
         this.username = username;
         this.email = email;
         this.roles = roles;
         this.phonenumber = phonenumber;
+        this.refreshToken = refreshToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public String getPhonenumber() {

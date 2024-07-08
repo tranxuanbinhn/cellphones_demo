@@ -30,6 +30,8 @@ public class OrderEntity extends BaseEntity{
     @Column(name ="ship_payment")
     private BigDecimal shipPayment;
 
+    private BigDecimal totalDue;
+
     @Column(name = "address")
     private  String address;
 

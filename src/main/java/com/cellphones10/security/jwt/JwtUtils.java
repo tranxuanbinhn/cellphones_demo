@@ -41,6 +41,11 @@ public class JwtUtils {
                 .signWith(key())
                 .compact();
     }
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)).signWith( key())
+                .compact();
+    }
 
     public String getUserNameFromJwtToken(String token) {
         // Assuming you have a `Key` object named `jwtKey` representing your JWT secret

@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
-@RequestMapping("/api/test/category")
+@RequestMapping("/api/admin/category")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -24,7 +24,7 @@ public class CategoryController {
         return  ResponseEntity.ok(categoryDTOSaved);
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,@RequestBody CategoryDTO categoryDTO)
     {
         categoryDTO.setId(id);
@@ -39,6 +39,16 @@ public class CategoryController {
         output.setPage(page);
         output.setTotalPage(categoryService.Count()/limit);
         output.setListResult(categoryService.findAll(pageable));
+        return ResponseEntity.ok(output);
+
+    }
+    @GetMapping("/getall")
+    public ResponseEntity<Output> getAllCategory()
+    {
+
+        Output output = new Output();
+
+        output.setListResult(categoryService.findAll());
         return ResponseEntity.ok(output);
 
     }

@@ -39,6 +39,7 @@ public class ProductDTO extends AbstractDTO{
     private List<Long> orderdetailIds;
 
 
+
     public ProductDTO(@NotBlank String productName, String description, String size, String color, Integer numberStock,@NotBlank BigDecimal price, String image, Integer weight, Integer height, Integer length, Integer width, String brandName, String categoryName, List<Long> reviewIds, List<Long> orderdetailIds) {
         this.productName = productName;
         this.description = description;

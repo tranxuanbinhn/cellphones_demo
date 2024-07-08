@@ -7,6 +7,7 @@ public class Output<T> {
     private  Integer page;
     private List<T> listResult;
     private Integer remainingproduct;
+    private Long totalItems;
     public Output(Long totalPage, Integer page, List<T> listResult, Integer remainingproduct) {
         this.totalPage = totalPage;
         this.page = page;
@@ -17,6 +18,13 @@ public class Output<T> {
 
     }
 
+    public Long getTotalItems() {
+        return totalItems;
+    }
+
+    public void setTotalItems(Long totalItems) {
+        this.totalItems = totalItems;
+    }
 
     public Long getTotalPage() {
         return totalPage;

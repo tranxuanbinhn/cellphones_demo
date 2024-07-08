@@ -13,21 +13,20 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
-@RequestMapping("api/test/brand")
+@RequestMapping("api/admin/brand")
 public class BrandController {
     @Autowired
     private BrandService brandService;
 
     @GetMapping()
-    public Output<BrandDTO> GetAll(@RequestParam("page") int page, @RequestParam("limit") int limit)
+    public Output<BrandDTO> GetAll()
     {
-        Pageable pageable = PageRequest.of(page-1, limit);
+
         Output<BrandDTO> output = new Output<>();
-        output.setListResult(brandService.findAll(pageable));
-        output.setTotalPage(brandService.CountPage()/limit);
-        output.setPage(page);
+        output.setListResult(brandService.findAll());
+
 
 
         return output;

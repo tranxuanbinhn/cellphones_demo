@@ -69,14 +69,12 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests().antMatchers("/api/test/**","/api/vnpay/**","/api/user/**").permitAll()
                 .antMatchers(("/api/auth/*")).permitAll().antMatchers(("/api/product/**")).hasRole("USER")
-                .antMatchers("/api/test/user").hasRole("USER")
-                .antMatchers("/api/test/mod").hasRole("MODERATOR")
-                .antMatchers("/api/test/admin").hasRole("ADMIN").anyRequest().authenticated();
+                .antMatchers("/api/admin/**").hasRole("ADMIN").anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build(); }
-
+    
 }

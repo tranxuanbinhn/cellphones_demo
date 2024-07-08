@@ -12,6 +12,7 @@ public class UserDTO extends AbstractDTO{
     private  String password;
     private  String phonenumber;
     private List<Long> orderIds;
+    private String role;
 
     public UserDTO(String username, String email, String password, String phonenumber, List<Long> orderIds) {
         this.username = username;

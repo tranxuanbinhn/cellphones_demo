@@ -47,6 +47,9 @@ public class User extends BaseEntity{
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<ReviewEntity> review;
+
     public User(String username, String email, String password, String phonenumber) {
         this.username = username;
         this.email = email;

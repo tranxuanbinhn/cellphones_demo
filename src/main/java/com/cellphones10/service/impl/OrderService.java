@@ -1,6 +1,7 @@
 package com.cellphones10.service.impl;
 
 import com.cellphones10.dto.OrderDTO;
+import com.cellphones10.dto.OrderDetailDTO;
 import com.cellphones10.entity.*;
 import com.cellphones10.repository.*;
 import com.cellphones10.service.IOrderService;
@@ -44,13 +45,7 @@ public class OrderService implements IOrderService {
             }
 
             OrderEntity orderEntity = new OrderEntity();
-
-            if (orderDTO.getMethod().equals("PAYBACK")) {
-                orderEntity.setStatus(true);
-            }
-            else {
-                orderEntity.setStatus(false);
-            }
+            orderEntity.setStatus(true);
 
 
             orderEntity.setUser(user);
@@ -87,6 +82,8 @@ public class OrderService implements IOrderService {
 
             saved.setOrderDetails(orderDetailEntityList);
             saved.setTotalPrice(total);
+            saved.setShipPayment(orderDTO.getShipPayment());
+            saved.setTotalDue(total.add(orderDTO.getShipPayment()));
             orderRepository.save(saved);
 
             return mapper.map(saved, OrderDTO.class);
@@ -96,6 +93,41 @@ public class OrderService implements IOrderService {
             return null;
         }
 
+    }
+
+
+    public Boolean save(Long id, String userName) {
+      try{
+          User user = userRepository.findByUsername(userName).get();
+          OrderEntity orderEntity = orderRepository.findById(id).get();
+          if(!user.equals(orderEntity.getUser()))
+          {
+              return  false;
+          }
+          orderEntity.setStatus(false);
+          orderRepository.save(orderEntity);
+
+          return true;
+      }
+       catch (RuntimeException e)
+       {
+            return  false;
+       }
+    }
+    public Boolean save(Long id) {
+        try{
+
+            OrderEntity orderEntity = orderRepository.findById(id).get();
+
+            orderEntity.setStatus(false);
+            orderRepository.save(orderEntity);
+
+            return true;
+        }
+        catch (RuntimeException e)
+        {
+            return  false;
+        }
     }
 
     @Override
@@ -108,8 +140,208 @@ public class OrderService implements IOrderService {
         return null;
     }
 
+
+    public List<OrderDTO> findAllOrder(String username) {
+        try {
+            User user = userRepository.findByUsername(username).get();
+            if (user == null) {
+                throw new RuntimeException("Not found User");
+            }
+            List<OrderEntity> orderEntities = user.getOrders();
+            ArrayList<OrderDTO> orderDTOS = new ArrayList<>();
+            orderEntities.stream().forEach(orderEntity -> {
+
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO = mapper.map(orderEntity, OrderDTO.class);
+                ArrayList<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+                orderEntity.getOrderDetails().stream().forEach(orderDetailEntity -> {
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                    orderDetailDTO.setImage(orderDetailEntity.getProduct().getImage());
+                    orderDetailDTO.setProductName(orderDetailEntity.getProduct().getProductName());
+                    orderDetailDTO.setQuantity(orderDetailEntity.getQuantity());
+                    orderDetailDTO.setUnitPrice(orderDetailEntity.getUnitPrice());
+                    orderDetailDTOS.add(orderDetailDTO);
+                });
+                orderDTO.setOrderDetailDTOS(orderDetailDTOS);
+                orderDTO.setUserName(orderEntity.getUser().getUsername());
+                if(orderEntity.getStatus().equals(true))
+                {
+                    orderDTOS.add(orderDTO);
+                }
+            });
+
+        return orderDTOS;
+    }
+        catch (Error e)
+        {
+            throw new RuntimeException();
+        }
+    }
+
+
+    public List<OrderDTO> findPenddingOrder(String username) {
+        try {
+            User user = userRepository.findByUsername(username).get();
+            if (user == null) {
+                throw new RuntimeException("Not found User");
+            }
+            List<OrderEntity> orderEntities = user.getOrders();
+            ArrayList<OrderDTO> orderDTOS = new ArrayList<>();
+            orderEntities.stream().forEach(orderEntity -> {
+
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO = mapper.map(orderEntity, OrderDTO.class);
+                ArrayList<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+                orderEntity.getOrderDetails().stream().forEach(orderDetailEntity -> {
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                    orderDetailDTO.setImage(orderDetailEntity.getProduct().getImage());
+                    orderDetailDTO.setProductName(orderDetailEntity.getProduct().getProductName());
+                    orderDetailDTO.setQuantity(orderDetailEntity.getQuantity());
+                    orderDetailDTO.setUnitPrice(orderDetailEntity.getUnitPrice());
+                    orderDetailDTOS.add(orderDetailDTO);
+                });
+                orderDTO.setOrderDetailDTOS(orderDetailDTOS);
+                orderDTO.setUserName(orderEntity.getUser().getUsername());
+                if(orderEntity.getPayment().getStatus().equals("pendding") && orderEntity.getStatus().equals(true))
+                {
+                    orderDTOS.add(orderDTO);
+                }
+            });
+
+            return orderDTOS;
+        }
+        catch (Error e)
+        {
+            throw new RuntimeException();
+        }
+    }
+
+    public List<OrderDTO> findPenddingOrderAdmin() {
+        try {
+
+
+            List<OrderEntity> orderEntities = orderRepository.findAll();
+            ArrayList<OrderDTO> orderDTOS = new ArrayList<>();
+            orderEntities.stream().forEach(orderEntity -> {
+
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO = mapper.map(orderEntity, OrderDTO.class);
+                ArrayList<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+                orderEntity.getOrderDetails().stream().forEach(orderDetailEntity -> {
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                    orderDetailDTO.setImage(orderDetailEntity.getProduct().getImage());
+                    orderDetailDTO.setProductName(orderDetailEntity.getProduct().getProductName());
+                    orderDetailDTO.setQuantity(orderDetailEntity.getQuantity());
+                    orderDetailDTO.setUnitPrice(orderDetailEntity.getUnitPrice());
+                    orderDetailDTOS.add(orderDetailDTO);
+                });
+                orderDTO.setOrderDetailDTOS(orderDetailDTOS);
+                orderDTO.setUserName(orderEntity.getUser().getUsername());
+                if(orderEntity.getPayment().getStatus().equals("pendding") && orderEntity.getStatus().equals(true))
+                {
+                    orderDTOS.add(orderDTO);
+                }
+            });
+
+            return orderDTOS;
+        }
+        catch (Error e)
+        {
+            throw new RuntimeException();
+        }
+    }
+    public List<OrderDTO> findPaidOrderAdmin() {
+        try {
+
+            List<OrderEntity> orderEntities = orderRepository.findAll();
+            ArrayList<OrderDTO> orderDTOS = new ArrayList<>();
+            orderEntities.stream().forEach(orderEntity -> {
+
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO = mapper.map(orderEntity, OrderDTO.class);
+                ArrayList<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+                orderEntity.getOrderDetails().stream().forEach(orderDetailEntity -> {
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                    orderDetailDTO.setImage(orderDetailEntity.getProduct().getImage());
+                    orderDetailDTO.setProductName(orderDetailEntity.getProduct().getProductName());
+                    orderDetailDTO.setQuantity(orderDetailEntity.getQuantity());
+                    orderDetailDTO.setUnitPrice(orderDetailEntity.getUnitPrice());
+                    orderDetailDTOS.add(orderDetailDTO);
+                });
+                orderDTO.setOrderDetailDTOS(orderDetailDTOS);
+                if(orderEntity.getPayment().getStatus().equals("paid") && orderEntity.getStatus().equals(true))
+                {
+                    orderDTOS.add(orderDTO);
+                }
+            });
+
+            return orderDTOS;
+        }
+        catch (Error e)
+        {
+            throw new RuntimeException();
+        }
+    }
+    public List<OrderDTO> findPaidOrder(String username) {
+        try {
+            User user = userRepository.findByUsername(username).get();
+            if (user == null) {
+                throw new RuntimeException("Not found User");
+            }
+            List<OrderEntity> orderEntities = user.getOrders();
+            ArrayList<OrderDTO> orderDTOS = new ArrayList<>();
+            orderEntities.stream().forEach(orderEntity -> {
+
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO = mapper.map(orderEntity, OrderDTO.class);
+                ArrayList<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+                orderEntity.getOrderDetails().stream().forEach(orderDetailEntity -> {
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                    orderDetailDTO.setImage(orderDetailEntity.getProduct().getImage());
+                    orderDetailDTO.setProductName(orderDetailEntity.getProduct().getProductName());
+                    orderDetailDTO.setQuantity(orderDetailEntity.getQuantity());
+                    orderDetailDTO.setUnitPrice(orderDetailEntity.getUnitPrice());
+                    orderDetailDTOS.add(orderDetailDTO);
+                });
+                orderDTO.setOrderDetailDTOS(orderDetailDTOS);
+                if(orderEntity.getPayment().getStatus().equals("paid") && orderEntity.getStatus().equals(true))
+                {
+                    orderDTOS.add(orderDTO);
+                }
+            });
+
+            return orderDTOS;
+        }
+        catch (Error e)
+        {
+            throw new RuntimeException();
+        }
+    }
     @Override
     public boolean delete(List<Long> list) {
         return false;
+    }
+    public List<OrderDTO> findAll()
+    {
+        List<OrderDTO> result = new ArrayList<>();
+        List<OrderEntity> orderEntities = orderRepository.findAll();
+        orderEntities.stream().forEach(orderEntity -> {
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO = mapper.map(orderEntity, OrderDTO.class);
+            ArrayList<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+            orderEntity.getOrderDetails().stream().forEach(orderDetailEntity -> {
+                OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                orderDetailDTO.setImage(orderDetailEntity.getProduct().getImage());
+                orderDetailDTO.setProductName(orderDetailEntity.getProduct().getProductName());
+                orderDetailDTO.setQuantity(orderDetailEntity.getQuantity());
+                orderDetailDTO.setUnitPrice(orderDetailEntity.getUnitPrice());
+                orderDetailDTOS.add(orderDetailDTO);
+
+        });
+            orderDTO.setOrderDetailDTOS(orderDetailDTOS);
+            orderDTO.setUserName(orderEntity.getUser().getUsername());
+            result.add(orderDTO);
+        });
+        return result;
     }
 }

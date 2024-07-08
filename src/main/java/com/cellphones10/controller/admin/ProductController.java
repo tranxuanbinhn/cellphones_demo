@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
-@RequestMapping("/api/test/product")
+@RequestMapping("/api/admin/product")
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -28,20 +29,27 @@ public class ProductController {
         output.setListResult(productService.findAll(pageable));
         output.setTotalPage(productService.count()/limit);
         output.setPage(page);
-
+        Long count = productService.count();
+        output.setTotalItems(count);
+        Integer remainpage =(int) (count-(page*limit));
+        if(remainpage < 0)
+        {
+            remainpage = 0;
+        }
+        output.setRemainingproduct(remainpage);
 
         return output;
 
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public ProductDTO AddBrand(@RequestBody ProductDTO productDTO)
     {
 
         return productService.save(productDTO);
 
     }
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ProductDTO UpdateBrand(@Valid @PathVariable("id") Long id, @RequestBody ProductDTO productDTO)
     {
 
@@ -51,10 +59,10 @@ public class ProductController {
 
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> DeleteProduct(@RequestBody List<Long> ids)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> DeleteProduct(@PathVariable Long id)
     {
-        boolean result= productService.delete(ids);
+        boolean result= productService.delete(id);
         if(result == true)
         {
             return ResponseEntity.ok().build();

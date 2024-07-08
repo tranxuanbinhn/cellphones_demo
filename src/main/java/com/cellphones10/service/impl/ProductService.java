@@ -71,6 +71,24 @@ public class ProductService implements IProductService {
         List<ProductEntity> productEntities = productRepository.findAll(pageable).getContent();
         List<ProductDTO> productDto = new ArrayList<>();
         for (ProductEntity productEntity:productEntities) {
+            ProductDTO productDTO= mapper.map(productEntity, ProductDTO.class);
+            productDTO.setBrandName(productEntity.getBrand().getBrandName());
+            productDTO.setCategoryName(productEntity.getCategory().getCategoryName());
+            productDto.add(productDTO);
+        }
+
+        return productDto;
+    }
+
+    @Override
+    public boolean delete(List<Long> list) {
+        return false;
+    }
+
+    public List<ProductDTO> findAll() {
+        List<ProductEntity> productEntities = productRepository.findAll();
+        List<ProductDTO> productDto = new ArrayList<>();
+        for (ProductEntity productEntity:productEntities) {
             productDto.add(mapper.map(productEntity, ProductDTO.class));
         }
 
@@ -84,31 +102,27 @@ public class ProductService implements IProductService {
             throw  new RuntimeException();
         }
         ProductDTO result = mapper.map(productEntity.get(),ProductDTO.class);
+
+        result.setBrandName(productEntity.get().getBrand().getBrandName());
+        result.setCategoryName(productEntity.get().getCategory().getCategoryName());
+
         return  result;
     }
 
-    @Override
+
     @Transactional
-    public boolean delete(List<Long> list) throws RuntimeException{
+    public boolean delete(Long id) throws RuntimeException{
 
-          Integer count = list.size();
-          for (Long id:list) {
-
-              if(productRepository.existsById(id))
-              {
-                  productRepository.deleteById(id);
-                  count --;
-              }
-
-
-          }
-          if(count == 0)
-          {
-              return  true;
-          }
+         try{
+             productRepository.deleteById(id);
+             return true;
+         }
+         catch (RuntimeException runtimeException)
+         {
+                return false;
+         }
 
 
-      return false;
 
     }
     public List<ProductDTO> findTop5ProductByCategoryId(Long categoryId)

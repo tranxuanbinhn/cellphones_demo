@@ -14,6 +14,7 @@ import java.util.Set;
 public interface CartProductRespository extends JpaRepository<CartProduct, Long> {
     @Query(value = "select product_id from cart_product where created_by = ?", nativeQuery = true)
     Set<Long> getIdByUsername(String username);
+    @Query(value = "select * from cart_product where cart_id = ? order by created_date, moidfied_date desc", nativeQuery = true)
     List<CartProduct> findAllByCartId(Long id);
     Optional<CartProduct> findByProductId(Long id);
 }
