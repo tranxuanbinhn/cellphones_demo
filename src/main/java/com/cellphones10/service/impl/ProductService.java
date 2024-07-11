@@ -17,11 +17,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,9 +40,24 @@ public class ProductService implements IProductService {
     @Autowired
     private CategoryRespository categoryRespository;
 
-    @Override
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
+
     @Transactional
-    public ProductDTO save(ProductDTO productDTO) throws InternalException {
+    public ProductDTO save(ProductDTO productDTO, MultipartFile file) throws InternalException {
+
+        ProductEntity productEntity = new ProductEntity();
+        if(productDTO.getId()!=null)
+        {
+            productEntity = productRepository.findById(productDTO.getId()).get();
+            productDTO.setImage(productEntity.getImage());
+        }
+        if(file!=null)
+        {
+            Map dataImage = cloudinaryService.upload(file);
+            productDTO.setImage(dataImage.get("url").toString());
+        }
 
         CategoryEntity categoryEntity = categoryRespository.findByCategoryName(productDTO.getCategoryName());
         if(categoryEntity==null)
@@ -52,7 +69,7 @@ public class ProductService implements IProductService {
         {
             throw  new RuntimeException("Brand is null");
         }
-        ProductEntity productEntity = new ProductEntity();
+
         productEntity = mapper.map(productDTO, ProductEntity.class);
         productEntity.setBrand(brandEntity);
         productEntity.setCategory(categoryEntity);
@@ -64,6 +81,11 @@ public class ProductService implements IProductService {
         result.setCategoryName(categoryEntity.getCategoryName());
         result.setBrandName(brandEntity.getBrandName());
         return result;
+    }
+
+    @Override
+    public ProductDTO save(ProductDTO productDTO) {
+        return null;
     }
 
     @Override

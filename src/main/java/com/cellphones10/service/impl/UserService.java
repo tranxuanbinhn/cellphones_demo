@@ -133,14 +133,16 @@ public class UserService implements IUserService {
                if(userDTO.getRole().equals("admin"))
                {
                    role = roleRepository.findByName(ERole.ROLE_ADMIN).get();
-               }if(userDTO.getRole().equals("moderator"))
-           {
-               role = roleRepository.findByName(ERole.ROLE_MODERATOR).get();
-           }
+               }
+               if(userDTO.getRole().equals("moderator"))
+                {
+                    role = roleRepository.findByName(ERole.ROLE_MODERATOR).get();
+                }
+               roles.add(role);
+               user.setRoles(roles);
            }
 
-           roles.add(role);
-           user.setRoles(roles);
+
            userRepository.save(user);
            return true;
        }

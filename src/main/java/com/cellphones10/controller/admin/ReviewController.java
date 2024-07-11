@@ -10,15 +10,17 @@ import com.cellphones10.service.impl.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
-@RequestMapping("/api/admin/review")
+    @RequestMapping("/api/admin/review")
 public class ReviewController {
     @Autowired private ReviewService reviewService;
     @PostMapping("/add")
@@ -26,7 +28,18 @@ public class ReviewController {
     {
         return  reviewService.save(reviewDTO, username);
     }
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteReview(@PathVariable Long id)
+    {
+        if(reviewService.delete(id))
+        {
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        else
+        {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
     @GetMapping()
     public Output<ReviewDTO> getAllByProduct(@RequestParam("page") int page, @RequestParam("limit") int limit, @RequestParam("id") Long productId) {
         Pageable pageable = PageRequest.of(page - 1, limit);

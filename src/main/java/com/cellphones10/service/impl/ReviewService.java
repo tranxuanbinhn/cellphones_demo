@@ -65,7 +65,7 @@ public class ReviewService implements IReviewService {
     }
 
     public List<ReviewDTO> findAllByProduct(Pageable pageable, Long productId) {
-        List<ReviewEntity> list = reviewRepository.findAllByProductId(pageable, productId).getContent();
+        List<ReviewEntity> list = reviewRepository.findAllByProductId(productId,pageable).getContent();
         List<ReviewDTO> result= new ArrayList<>();
         list.stream().forEach(reviewEntity -> {
             ReviewDTO reviewDTO = new ReviewDTO();
@@ -94,7 +94,7 @@ public class ReviewService implements IReviewService {
         Double fourRate = 0.0;
         Double fiveRate = 0.0;
 
-        List<ReviewEntity> list = reviewRepository.findAll();
+        List<ReviewEntity> list = reviewRepository.findAllByProductId(productID);
        for (ReviewEntity reviewEntity:list)
        {
            total+=(double) reviewEntity.getRate();
@@ -137,6 +137,20 @@ public class ReviewService implements IReviewService {
                 ReviewEntity reviewEntity = reviewRepository.findById(id).get();
                 reviewRepository.delete(reviewEntity);
             }
+            return true;
+        }
+        catch (RuntimeException runtimeException)
+        {
+            return  false;
+        }
+    }
+
+    public boolean delete(Long id) {
+        try{
+
+                ReviewEntity reviewEntity = reviewRepository.findById(id).get();
+                reviewRepository.delete(reviewEntity);
+
             return true;
         }
         catch (RuntimeException runtimeException)

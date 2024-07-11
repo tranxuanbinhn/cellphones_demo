@@ -11,9 +11,12 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity,Long> {
-
-    Page<ReviewEntity> findAllByProductId(Pageable pageable, Long productId);
+    @Query(value = "select * from review where product_id = ?1", nativeQuery = true)
+    Page<ReviewEntity> findAllByProductId(Long productId,Pageable pageable);
     @Query(value = "select count(*) from review where product_id = ?", nativeQuery = true)
     Long countReviewBInProduct(Long productId);
+
+    @Query(value = "select * from review where product_id = ?1", nativeQuery = true)
+    List<ReviewEntity> findAllByProductId(Long productId);
 
 }

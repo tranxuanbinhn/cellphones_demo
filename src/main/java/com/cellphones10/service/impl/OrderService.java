@@ -36,6 +36,8 @@ public class OrderService implements IOrderService {
     private ModelMapper mapper;
 
 
+
+
     @Transactional
     public OrderDTO save(OrderDTO orderDTO, String username) {
         try {
@@ -162,6 +164,7 @@ public class OrderService implements IOrderService {
                     orderDetailDTO.setUnitPrice(orderDetailEntity.getUnitPrice());
                     orderDetailDTOS.add(orderDetailDTO);
                 });
+
                 orderDTO.setOrderDetailDTOS(orderDetailDTOS);
                 orderDTO.setUserName(orderEntity.getUser().getUsername());
                 if(orderEntity.getStatus().equals(true))
@@ -338,7 +341,9 @@ public class OrderService implements IOrderService {
                 orderDetailDTOS.add(orderDetailDTO);
 
         });
+
             orderDTO.setOrderDetailDTOS(orderDetailDTOS);
+            orderDTO.setTotalPrice(orderEntity.getTotalDue());
             orderDTO.setUserName(orderEntity.getUser().getUsername());
             result.add(orderDTO);
         });
