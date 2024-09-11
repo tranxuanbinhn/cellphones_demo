@@ -210,6 +210,22 @@ public class ProductService implements IProductService {
         });
         return  productDTOS;
     }
+    public List<ProductDTO> filterAll(Integer limit, Integer page, String order, Integer dir)
+    {
+        Integer offset = page - 1;
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(order).ascending());;
+        if(dir==1)
+        {
+            pageable = PageRequest.of(offset, limit, Sort.by(order).descending());
+        }
+
+
+        List<ProductEntity> productEntities = productRepository.findAll(pageable).getContent();
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        productEntities.stream().forEach(productEntity -> {productDTOS.add(mapper.map(productEntity,ProductDTO.class));
+        });
+        return  productDTOS;
+    }
     public Long countByCategoryCode(String categoryCode)
     {
         Long rs = productRepository.countProductByCategoryCode(categoryCode);

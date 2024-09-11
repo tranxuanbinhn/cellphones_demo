@@ -102,6 +102,23 @@ public class ProductControllerUser {
         output.setRemainingproduct(remainpage);
         return output;
     }
+    @GetMapping("/fillterall")
+    public Output<ProductDTO> filterAllProduct(@RequestParam Integer page, Integer limit, String orderby, Integer dir)
+    {
+        Output<ProductDTO> output = new Output<>();
+        List<ProductDTO> list = productService.filterAll(limit,page, orderby,dir);
+        output.setListResult(list);
+        output.setPage(page);
+//        findProductByCategoryCode
+        Long count = productService.count();
+        Integer remainpage =(int) (count-(page*limit));
+        if(remainpage < 0)
+        {
+            remainpage = 0;
+        }
+        output.setRemainingproduct(remainpage);
+        return output;
+    }
     @GetMapping("/search")
     public Output<ProductDTO> searchByProductName(@RequestParam String name, Integer page, Integer limit)
     {
